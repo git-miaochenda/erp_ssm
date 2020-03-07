@@ -1,0 +1,392 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div class="easyui-layout" data-options="fit:true">
+    <!-- Begin of toolbar -->
+    <div id="wu-toolbar-goods">
+        <div class="wu-toolbar-button">
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openAddGoods()" plain="true">添加</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="openEditGoods()" plain="true">修改</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeGoods()" plain="true">删除</a>
+<!--            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="cancel()" plain="true">取消</a>-->
+<!--            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="reload()" plain="true">刷新</a>-->
+            <!--<a href="#" class="easyui-linkbutton" iconCls="icon-print" onclick="openAddGoods()" plain="true">打印</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-help" onclick="openEditGoods()" plain="true">帮助</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-undo" onclick="removeGoods()" plain="true">撤销</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-redo" onclick="cancel()" plain="true">重做</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-sum" onclick="reload()" plain="true">总计</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-back" onclick="reload()" plain="true">返回</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" onclick="reload()" plain="true">提示</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-save" onclick="reload()" plain="true">保存</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-cut" onclick="reload()" plain="true">剪切</a>
+            -->
+        </div>
+        <div class="wu-toolbar-search">
+<!--                    <input type="text" name="ceshi" id="ceshi" />-->
+            <label>商品名称：</label><input class="wu-text" id="name" style="width:100px">
+            <label>产地：</label><input class="wu-text" id="origin" style="width:100px">
+            <label>厂商：</label><input class="wu-text" id="producer" style="width:100px">
+            <label>进货价：</label>
+            <select class="easyui-combobox" panelHeight="auto" id="ceshi" name="ceshi" style="width:100px">
+                <option value="">请选择区间</option>
+                <option value="1">1~30</option>
+                <option value="2">31~50</option>
+                <option value="3">51~100</option>
+            </select>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-search" id="empSearch">开始检索</a>
+            <script>
+                $(function(){
+                    $("#empSearch").click(function(){
+                        //当点击此按钮是，附带参数重载表格 参数json对象 name:value empVo类型的属性
+                        //也附带页码
+                        console.log($("#ceshi").combobox('getText'))
+                        $("#wu-datagrid-goods").datagrid("load",{
+                            pageNum:$("#wu-datagrid-goods").datagrid('options').pageNumber
+                            ,pageSize:$("#wu-datagrid-goods").datagrid('options').pageSize
+                            ,name: $("#name").val()
+                            ,origin:$("#origin").val()
+                            ,producer:$("#producer").val()
+                            ,ceshi:$("#ceshi").combobox('getText')
+                        });
+                    });
+                });
+            </script>
+        </div>
+    </div>
+    <!-- End of toolbar easyui提供的动态table 通过对json数据的处理自动展示数据以及分页-->
+    <table id="wu-datagrid-goods" class="easyui-datagrid" toolbar="#wu-toolbar-goods"></table>
+</div>
+<!-- Begin of easyui-dialog -->
+<div id="wu-dialog-goods" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:400px; padding:10px;">
+    <form id="wu-form-goods" method="post">
+        <!--隐藏的id做修改时，要传到后台-->
+        <input type="hidden" name="uuid" class="wu-text"/>
+        <table>
+            <tr>
+                <td width="100" align="right">商品名称:</td>
+                <td><input type="text" name="name" class="easyui-validatebox"  data-options="required:true"/></td>
+            </tr>
+            <tr>
+                <td width="100" align="right">产地:</td>
+                <td><input type="text" name="origin" class="easyui-validatebox" data-options="required:true"/></td>
+            </tr>
+            <tr>
+                <td align="right">厂商:</td>
+                <td><input type="text" name="producer" class="easyui-validatebox" data-options="required:true"/></td>
+            </tr>
+            <tr>
+                <td align="right">计量单位:</td>
+                <td><input type="text" name="unit" class="wu-text" /></td>
+            </tr>
+            <tr>
+                <td align="right">进货价:</td>
+                <td><input type="text" name="inPrice" class="easyui-validatebox" data-options="required:true" /></td>
+            </tr>
+            <tr>
+                <td align="right">销售价:</td>
+                <td><input type="text" name="outPrice" class="wu-text" /></td>
+            </tr>
+            <tr>
+                <td align="right">商品类型ID:</td>
+                <td><input type="text" name="goodsTypeId" class="wu-text" /></td>
+            </tr>
+
+        </table>
+    </form>
+    <!--<script>
+        $(function () {
+            $.extend($.fn.validatebox.defaults.rules,{
+               tel:{
+                  validator:function (value) {
+                    return /^(((13[0-9]{1})|(14[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value);
+                  },
+                   message:'请输入正确的手机号格式！'
+               } ,
+                username:{
+                   validator:function (value,param) {
+                        return value.length>=5 && value.length<=12;
+                   },
+                    message: '请输入5~12位字符的账号'
+                }
+            });
+        })
+
+        $(function(){
+          $.ajax({
+              url:'role/findAll', //从后台获取所有的角色id和名称
+              success:function(data){ //data是一个json数组
+              $(data).each(function(){
+                  $('#ck_roles').html(
+                      $('#ck_roles').html()+
+                      "<input type='checkbox' name='roleIds' value='"+this.id+"'>"+"<span>"+this.name+"</span><br>"
+                  );
+              });
+              }
+          });
+        })
+    </script>-->
+</div>
+<!-- End of easyui-dialog -->
+
+<script type="text/javascript">
+    /**
+     * Name 添加记录
+     */
+    function addGoods(){
+        //提交form表单
+        $('#wu-form-goods').form('submit', {
+            url:'goods/add',//提交的路径 goods/add
+            success:function(data){ //提交成功之后的回调函数 data返回的数据 true
+                if(data=='true'){
+                    $.messager.alert('信息提示','提交成功！','info',function(){
+                        //当窗口关闭时触发该函数--更新表格
+                        $('#wu-datagrid-goods').datagrid('reload');
+                    });
+
+                    $('#wu-dialog-goods').dialog('close');
+                }
+                else
+                {
+                    $.messager.alert('信息提示','提交失败！','info');
+                }
+            }
+        });
+    }
+
+    /**
+     * Name 修改记录
+     */
+    function editGoods(){
+        $('#wu-form-goods').form('submit', {
+            url:'goods/update', //修改路径
+            success:function(data){ //响应数据
+                if(data){
+                    $.messager.alert('信息提示','修改成功！','info',function(){
+                      //当窗口关闭时触发该函数--更新表格
+                        $('#wu-datagrid-goods').datagrid('reload');
+                    });
+                    $('#wu-dialog-goods').dialog('close');
+                }
+                else
+                {
+                    $.messager.alert('信息提示','提交失败！','info');
+                }
+            }
+        });
+    }
+
+    /**
+     * Name 删除记录
+     */
+    function removeGoods(){
+        var items = $('#wu-datagrid-goods').datagrid('getSelections');
+        //如果没有选中任何项，则不需要有任何操作
+        if(items.length==0){
+            return;
+        }
+        $.messager.confirm('信息提示','确定要删除该记录？', function(result){//当点击确定时 result是true
+            if(result){
+                //获取要删除的所有id
+                var uuids = [];
+                //jQuery的循环方法each 遍历items数组
+                $(items).each(function(){
+                    uuids.push(this.uuid); //this数组中的每一项 item 把选中的行的id加入到uuids数组中
+                });
+                console.log(uuids);
+                //alert(uuids);return;
+                $.ajax({
+                    url:'goods/remove',//goods/remove
+                    //ajax当请求参数是一个数组的时候，需要设置
+                    traditional:true,//在service中这个属性默认是false 在传递数组时是不允许绑定的 改为true
+                    data:{uuid:uuids}, //uuids是name uuids是数组值
+                    success:function(data){
+                        if(data){
+                            $.messager.alert('信息提示','删除成功！','info',function(){
+                                //当窗口关闭时触发该函数--更新表格
+                                $('#wu-datagrid-goods').datagrid('reload');
+                            });
+                        }
+                        else
+                        {
+                            $.messager.alert('信息提示','删除失败！','info');
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Name 打开添加窗口
+     */
+    function openAddGoods(){
+        //easyui的表单功能--清除表单数据
+        $('#wu-form-goods').form('clear');
+        //easyui的dialog功能--把id为wu-dialog-goods的组件作为easyui的窗口来定义了
+        $('#wu-dialog-goods').dialog({
+            //是否关闭窗口：false 不关闭--显示窗口
+            closed: false,
+            //定义窗口是不是模态（modal）窗口。true是 false不是
+            //窗口 模态：当展示窗口时，只能操作窗口上的内容，其他地方无法操作（无法获取焦点）非模态（窗口不影响其他地方的操作）
+            modal:true,
+            //窗口标题文本
+            title: "添加信息",
+            //数组 按钮 每一个按钮有json对象来定义
+            buttons: [{ //确定按钮
+                text: '确定',
+                iconCls: 'icon-ok', //class
+                handler: addGoods //类型function，用于处理点击该图标以后的动作 相当于onclick
+            }, { //取消按钮
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    //关闭模态框
+                    $('#wu-dialog-goods').dialog('close');
+                }
+            }]
+        });
+    }
+
+    /**
+     * Name 打开修改窗口
+     */
+    function openEditGoods(){
+        //先清除表单内容
+        $('#wu-form-goods').form('clear');
+        //easyui的表格功能 getSelect默认选择返回第一行
+        // var item= $('#wu-datagrid-goods').datagrid('getSelected');
+        //getSelected none 返回所有选中的行，当没有选中的记录时，将返回空数组
+        var items =$('#wu-datagrid-goods').datagrid('getSelections');
+        console.log(items);
+        if(items.length==0){
+            //请选择要修改的数据--没有任何效果
+            $.messager.alert('信息提示','请选择要修改的数据!','warning');
+            return;
+        }else if(items.length>1){
+            //提示一次只能修改一条数据
+            $.messager.alert('信息提示','一次只能修改一条数据!','warning');//warning是感叹号图标
+            return;
+            //直接给表单进行回显 使用勾选中的data
+
+            // $('#wu-form-goods').form('load',items[0]);
+            //alert(item.productid);return;
+        }
+        $.ajax({ //ajax数据回显
+            url:'goods/findById',//提交路径 goods/findById
+            data:{uuid:items[0].uuid},//提交的数据 id
+            success:function(data){ //成功回调函数 data响应数据
+                if(data){
+                    console.log(data);
+                    //绑定值
+                    $('#wu-form-goods').form('load', data) //data就是在表单中要回显的数据，自动进行回显 根据name的值
+                    //回显多选框 选中的data.roleNames 是一个字符串 多个role使用，拼接起来的，先拆分成一个数组
+                    /*var roleNames=data.roleNames.split(",");
+                    for (var i=0;i<roleNames.length;i++){
+                        //找到含有改文本的span上的 一个多选框 设置为选中
+                        $("span:contains('"+roleNames[i]+"')").prev("input:checkbox").attr("checked","checked");
+                    }
+                    //做一个选中部门
+                    $.ajax({
+                        url:'dept/findAll'
+                        ,success:function(deptData){
+                            console.log(deptData);
+                            $.each(deptData,function(){
+                                if (this.name==data.deptName){
+                                    $('#deptSelect').combobox('select',this.id);
+                                }
+                            })
+                        }
+                    });*/
+                }
+                else{
+                    $('#wu-dialog-goods').dialog('close'); //关闭模态
+                }
+            }
+        });
+        $('#wu-dialog-goods').dialog({
+            closed: false, //是否关闭窗口
+            modal:true,  //定义窗口是否是模态
+            title: "修改信息",
+            buttons: [{
+                text: '确定',
+                iconCls: 'icon-ok',
+                handler: editGoods //执行修改
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $('#wu-dialog-goods').dialog('close');
+                }
+            }]
+        });
+    }
+
+    /**
+     * Name 分页过滤器
+     * data 表格要展示的数据
+     */
+    function pagerFilter(data){
+        var dg = $(this); //当前表格
+        var opts = dg.datagrid('options'); //当前table的属性
+        var pager = dg.datagrid('getPager'); //获取当前表格的分页对象
+        pager.pagination({
+            //当页码改变是会触发此事件 pageNum新的页码 pageSize新的每页条数
+            onSelectPage:function(pageNum, pageSize){
+                //做分页时的请求操作
+                opts.pageNumber = pageNum;
+                opts.pageSize = pageSize;
+                //使用表格自带的方法重载数据
+                dg.datagrid('load',{ //自动从数据请求的ajax地址重新加载数据 附带把参数传过去
+                    pageNum:pageNum,
+                    pageSize:pageSize
+                    ,name: $("#name").val()
+                    ,origin:$("#origin").val()
+                    ,producer:$("#producer").val()
+                    // ,inPrice:$("#inPrice").val()
+                    ,ceshi:$("#ceshi").combobox('getText')
+
+                });
+                //更改下面的页码
+                pager.pagination('refresh',{pageNumber:pageNum,pageSize:pageSize});
+                //dg.datagrid('loadData',data);
+            }
+        });
+        return data;
+    }
+
+    /**
+     * Name 载入数据
+     */
+    $('#wu-datagrid-goods').datagrid({
+        url:'goods/list',//请求数据的请求地址--ajax请求地址 easyui返回的数据标准格式必须含有total和rows
+        //total 是查询的总数，用户分页 rows 是一个json数组，是要展示的数据
+        loadFilter:pagerFilter,
+
+        // rownumbers:true,
+        singleSelect:false, //允许选择多行
+        pageSize:2,//每页默认两条数据
+        pageList:[1,2,3,4,5],//每页展示数据的条数
+        pagination:true,//展示分页栏
+        //multiSort:true,
+        fitColumns:true,//会自动扩大或缩小列的尺寸以适应网格的宽度并且防止水平滚动。
+        fit:true,
+        columns:[[ //列属性，指定数据表格的表头
+            { checkbox:true}, //多选框
+            //title就是表格的表头 field就是json对象中的属性名 必须跟展示的json数据中属性名称一致，否则匹配不到数据
+            { field:'uuid',title:'商品编号',width:100,sortable:true},
+            { field:'name',title:'商品名称',width:100,sortable:true},
+            { field:'origin',title:'产地',width:150,sortable:true},
+            { field:'producer',title:'厂商',width:100},
+            { field:'unit',title:'计量单位',width:50},
+            { field:'inPrice',title:'进货价',width:50},
+            { field:'outPrice',title:'销售价',width:50},
+            { field:'goodsTypeId',title:'商品类型ID',width:50},
+        ]]
+    });
+</script>
+</body>
+</html>

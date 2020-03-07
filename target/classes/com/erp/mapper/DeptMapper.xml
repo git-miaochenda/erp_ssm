@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.mapper.DeptMapper">
+
+	<!--List<Dept> findAll();-->
+	<select id="findAll" resultType="com.erp.pojo.Dept">
+		select * from `dept`
+	</select>
+
+	<!--void remove(@Param("ids") Integer[] ids);-->
+	<delete id="remove">
+		delete from `dept` where id in
+		<foreach collection="ids" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+
+	<!--void update(@param("dept") Dept dept);-->
+	<update id="update">
+		update `dept` set `name`=#{dept.name},tel=#{dept.tel} where id=#{dept.id}
+	</update>
+
+	<!--Dept findById(@Param("id") int id);-->
+	<select id="findById" resultType="com.erp.pojo.Dept">
+		select * from `dept` where id=#{id}
+	</select>
+
+	<!--void add(@Param)Dept dept);-->
+	<insert id="add">
+		insert into `dept`(`name`,`tel`) values(#{dept.name},#{dept.tel});
+	</insert>
+
+	<select id="count" resultType="int">
+		select count(*) from `dept`
+	</select>
+	
+	<select id="page" resultType="com.erp.pojo.Dept">
+		select * from `dept` limit #{startNum},#{pageSize}
+	</select>
+</mapper>
